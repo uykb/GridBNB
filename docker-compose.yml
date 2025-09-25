@@ -1,0 +1,91 @@
+# ========== claw.cloud 容器服务专用 Docker Compose 配置 ==========
+# 简化的单容器部署配置，适用于 claw.cloud 容器服务
+
+version: '3.8'
+
+services:
+  gridbnb-bot:
+    # 使用优化的 Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
+    
+    # 容器名称
+    container_name: gridbnb-trading-bot
+    
+    # 重启策略
+    restart: unless-stopped
+    
+    # 环境变量文件 (在 claw.cloud 中通常通过控制台配置)
+    env_file:
+      - .env
+    
+    # 端口映射 - Web UI 访问端口
+    ports:
+      - "58181:58181"
+    
+    # 数据持久化 (如果 claw.cloud 支持卷挂载)
+    volumes:
+      - gridbnb-data:/app/data
+      - gridbnb-logs:/app/logs
+    
+    # 健康检查
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:58181/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    
+    # 资源限制 (根据 claw.cloud 套餐调整)
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    
+    # 网络配置
+    networks:
+      - gridbnb-network
+    
+    # 环境变量 (主要配置应通过 .env.cloud 或控制台设置)
+    environment:
+      - TZ=Asia/Shanghai
+      - PYTHONUNBUFFERED=1
+
+# 数据卷定义
+volumes:
+  gridbnb-data:
+    driver: local
+  gridbnb-logs:
+    driver: local
+
+# 网络定义
+networks:
+  gridbnb-network:
+    driver: bridge
+
+# ========== 使用说明 ==========
+# 1. 本地测试部署:
+#    docker-compose up -d
+#
+# 2. 查看日志:
+#    docker-compose logs -f
+#
+# 3. 停止服务:
+#    docker-compose down
+#
+# 4. 在 claw.cloud 部署:
+#    - 上传项目代码到 claw.cloud
+#    - 在控制台配置环境变量 (参考 .env)
+#    - 选择此 docker-compose.yml 文件进行部署
+#    - 设置端口映射为 58181
+
+# ========== 注意事项 ==========
+# - 确保在 claw.cloud 控制台正确配置所有环境变量
+# - 监控容器资源使用情况，根据需要调整资源限制
+# - 定期备份交易数据和配置
+# - 建议启用 claw.cloud 的监控和告警功能
