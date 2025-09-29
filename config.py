@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     INITIAL_PRINCIPAL: float = 0.0
 
     # --- 可选配置 (从 .env 读取) ---
-    PUSHPLUS_TOKEN: Optional[str] = None
+    PUSHPLUS_TOKEN: Optional[str] = None  # 现在用作NotifyX的API Key
 
     # 理财功能开关
     ENABLE_SAVINGS_FUNCTION: bool = True

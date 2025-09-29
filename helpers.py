@@ -53,19 +53,24 @@ def send_pushplus_message(content, title="交易信号通知", timeout=settings.
         logging.error("未配置PUSHPLUS_TOKEN，无法发送通知")
         return
     
-    url = os.getenv('PUSHPLUS_URL', 'https://www.pushplus.plus/send')
+    # 使用NotifyX API
+    url = f"https://www.notifyx.cn/api/v1/send/{settings.PUSHPLUS_TOKEN}"
     data = {
-        "token": settings.PUSHPLUS_TOKEN,
         "title": title,
         "content": content,
-        "template": "txt"  # 使用文本模板
+        "description": "GridBNB交易系统通知"
     }
+    
+    headers = {
+        "Content-Type": "application/json"
+    }
+    
     try:
         logging.info(f"正在发送推送通知: {title}")
-        response = requests.post(url, data=data, timeout=timeout)
+        response = requests.post(url, json=data, headers=headers, timeout=timeout)
         response_json = response.json()
         
-        if response.status_code == 200 and response_json.get('code') == 200:
+        if response.status_code == 200 and response_json.get('success'):
             logging.info(f"消息推送成功: {content}")
         else:
             logging.error(f"消息推送失败: 状态码={response.status_code}, 响应={response_json}")
@@ -147,4 +152,4 @@ class LogConfig:
                 try:
                     os.remove(path)
                 except Exception as e:
-                    print(f"删除旧日志失败 {fname}: {str(e)}") 
+                    print(f"删除旧日志失败 {fname}: {str(e)}")
