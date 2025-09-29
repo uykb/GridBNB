@@ -165,16 +165,16 @@ class TradingConfig:
 
     # 动态时间间隔参数
     DYNAMIC_INTERVAL_PARAMS = settings.DYNAMIC_INTERVAL_PARAMS_JSON if settings.DYNAMIC_INTERVAL_PARAMS_JSON else {
-        # 定义波动率区间与对应调整间隔（小时）的映射关系
+        # 根据波动率动态调整网格检查的时间间隔
         'volatility_to_interval_hours': [
-            # 格式: {'range': [最低波动率(含), 最高波动率(不含)], 'interval_hours': 对应的小时间隔}
-            # --- 与新的网格映射保持一致的时间间隔 ---
-            {'range': [0, 0.10], 'interval_hours': 1.0},      # 波动率 < 10%，每 1 小时检查一次
-            {'range': [0.10, 0.20], 'interval_hours': 0.5},   # 波动率 10-20%，每 30 分钟检查一次
-            {'range': [0.20, 0.30], 'interval_hours': 0.25},  # 波动率 20-30%，每 15 分钟检查一次
-            {'range': [0.30, 999], 'interval_hours': 0.125},  # 波动率 > 30%，每 7.5 分钟检查一次
+            # 格式: {'range': [最小波动率, 最大波动率), 'interval_hours': 间隔小时数}
+            # 注意：范围是左闭右开区间 [min, max)
+            {'range': [0, 0.10], 'interval_hours': 2.0},      # 波动率 < 10%，每 2 小时检查一次
+            {'range': [0.10, 0.20], 'interval_hours': 1.0},   # 波动率 10-20%，每 1 小时检查一次
+            {'range': [0.20, 0.30], 'interval_hours': 0.5},   # 波动率 20-30%，每 30 分钟检查一次
+            {'range': [0.30, 999], 'interval_hours': 0.25},   # 波动率 > 30%，每 15 分钟检查一次（原来7.5分钟）
         ],
-        # 定义一个默认间隔，以防波动率计算失败或未匹配到任何区间
+        # 默认间隔（当无法计算波动率时使用）
         'default_interval_hours': 1.0
     }
 
@@ -204,4 +204,4 @@ class TradingConfig:
     # update_min_position_ratio, update_all)
 
     # Removed unused validate_config method
-# End of class definition 
+# End of class definition

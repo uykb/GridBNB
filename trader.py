@@ -587,7 +587,7 @@ class GridTrader:
                 # 这个任务现在独立运行，不再被交易状态阻塞
                 dynamic_interval_seconds = await self._calculate_dynamic_interval_seconds()
                 if time.time() - self.last_grid_adjust_time > dynamic_interval_seconds:
-                    self.logger.info(
+                    self.logger.debug(
                         f"维护时间到达，准备更新波动率并调整网格 (间隔: {dynamic_interval_seconds / 3600:.2f} 小时).")
                     # adjust_grid_size 内部会调用 _calculate_volatility
                     await self.adjust_grid_size()
@@ -1136,12 +1136,12 @@ class GridTrader:
             # 3. 计算平滑后的波动率（移动平均值）
             # 只有当历史记录足够长时才开始计算，以保证平均值的有效性
             if len(self.volatility_history) < self.volatility_smoothing_window:
-                self.logger.info(f"正在收集波动率数据 ({len(self.volatility_history)}/{self.volatility_smoothing_window})... 瞬时值: {current_volatility:.4f}")
+                self.logger.debug(f"正在收集波动率数据 ({len(self.volatility_history)}/{self.volatility_smoothing_window})... 瞬时值: {current_volatility:.4f}")
                 return  # 数据不足，暂时不调整
 
             smoothed_volatility = sum(self.volatility_history) / len(self.volatility_history)
 
-            self.logger.info(f"波动率分析 | 瞬时值: {current_volatility:.4f} | 平滑后({self.volatility_smoothing_window}次平均): {smoothed_volatility:.4f}")
+            self.logger.debug(f"波动率分析 | 瞬时值: {current_volatility:.4f} | 平滑后({self.volatility_smoothing_window}次平均): {smoothed_volatility:.4f}")
 
             # 4. 【关键】使用平滑后的波动率来决定网格大小
             volatility_for_decision = smoothed_volatility
@@ -1157,7 +1157,7 @@ class GridTrader:
             # 公式: 新网格 = 基础网格 + k * (当前平滑波动率 - 波动率中心点)
             new_grid = base_grid + sensitivity_k * (volatility_for_decision - center_volatility)
 
-            self.logger.info(
+            self.logger.debug(
                 f"连续网格计算 | "
                 f"波动率: {volatility_for_decision:.2%} | "
                 f"计算公式: {base_grid:.2f}% + {sensitivity_k} * ({volatility_for_decision:.2%} - {center_volatility:.2%}) = {new_grid:.2f}%"
