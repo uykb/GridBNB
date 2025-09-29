@@ -70,8 +70,12 @@ def send_pushplus_message(content, title="交易信号通知", timeout=settings.
         response = requests.post(url, json=data, headers=headers, timeout=timeout)
         response_json = response.json()
         
-        if response.status_code == 200 and response_json.get('success'):
-            logging.info(f"消息推送成功: {content}")
+        # NotifyX API成功响应：200(立即发送) 或 202(加入队列)
+        if response.status_code in [200, 202]:
+            if response.status_code == 202:
+                logging.info(f"消息推送成功(已加入队列): {title} - ID: {response_json.get('id')}")
+            else:
+                logging.info(f"消息推送成功: {title}")
         else:
             logging.error(f"消息推送失败: 状态码={response.status_code}, 响应={response_json}")
     except Exception as e:
