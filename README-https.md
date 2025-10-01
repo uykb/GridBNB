@@ -3,12 +3,12 @@
 
 ```yaml
    services:
-  # GridBNB 交易机器人服务
-  gridbnb-bot:
+  # Sky-Bot 交易机器人服务
+  sky-bot:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: gridbnb-bot
+    container_name: sky-bot
     restart: always
     env_file:
       - .env
@@ -19,7 +19,7 @@
       - ./:/app
       - ./data:/app/data  # 持久化数据目录
     networks:
-      - gridbnb-network
+      - sky-bot-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:58181/health"]
       interval: 30s
@@ -29,7 +29,7 @@
   # Nginx 反向代理服务
   nginx:
     image: nginx:alpine
-    container_name: gridbnb-nginx
+    container_name: sky-bot-nginx
     restart: always
     ports:
       - "80:80"  # 外部访问端口，用于HTTP和Certbot验证
@@ -40,9 +40,9 @@
       - ./certbot/conf:/etc/letsencrypt:ro  # 挂载SSL证书到Nginx（只读）
       - ./certbot/www:/var/www/certbot:rw  # Certbot webroot，用于验证
     depends_on:
-      - gridbnb-bot
+      - sky-bot
     networks:
-      - gridbnb-network
+      - sky-bot-network
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
       interval: 30s
@@ -52,7 +52,7 @@
   # Certbot服务，用于获取和续期SSL证书
   certbot:
     image: certbot/certbot:latest
-    container_name: gridbnb-certbot
+    container_name: sky-bot-certbot
     volumes:
       - ./certbot/conf:/etc/letsencrypt:rw  # 证书存储目录
       - ./certbot/www:/var/www/certbot:rw   # webroot目录，用于HTTP-01验证
@@ -60,7 +60,7 @@
     # 注意：entrypoint设置了自动续期循环，每12小时检查一次（Let's Encrypt推荐）
 
 networks:
-  gridbnb-network:
+  sky-bot-network:
     driver: bridge
 ```
 
@@ -69,7 +69,7 @@ networks:
 初始Nginx配置只需处理HTTP（80端口），添加Certbot验证路径。
 
 ```text
-# GridBNB Trading Bot - Nginx 反向代理配置
+# Sky-Bot Trading Bot - Nginx 反向代理配置
 # 此配置将外部80端口的请求转发到内部的交易机器人Web服务
 
 worker_processes auto;
@@ -106,9 +106,9 @@ http {
     gzip_types text/plain text/css text/xml text/javascript application/javascript application/xml+rss application/json;
 
     # 上游服务器定义
-    upstream gridbnb_backend {
+    upstream sky_bot_backend {
         # 在docker-compose网络中，使用服务名作为主机名
-        server gridbnb-bot:58181;
+        server sky-bot:58181;
         keepalive 32;
     }
 
@@ -135,7 +135,7 @@ http {
 
         # 主要代理配置
         location / {
-            proxy_pass http://gridbnb_backend;
+            proxy_pass http://sky_bot_backend;
             proxy_http_version 1.1;
             
             # 代理头设置
@@ -157,7 +157,7 @@ http {
 
         # 静态文件缓存 (如果有)
         location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
-            proxy_pass http://gridbnb_backend;
+            proxy_pass http://sky_bot_backend;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -169,7 +169,7 @@ http {
 
         # API 路径优化
         location /api/ {
-            proxy_pass http://gridbnb_backend;
+            proxy_pass http://sky_bot_backend;
             proxy_http_version 1.1;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
@@ -241,7 +241,7 @@ cp cp ./nginx/nginx.conf ./nginx/nginx.conf.bak
 完整的最终nginx.conf内容如下，请参考：
 
 ```yaml
-# GridBNB Trading Bot - Nginx 反向代理配置
+# Sky-Bot Trading Bot - Nginx 反向代理配置
 # 此配置将外部80端口的请求转发到内部的交易机器人Web服务
 
 worker_processes auto;
@@ -278,9 +278,9 @@ http {
     gzip_types text/plain text/css text/xml text/javascript application/javascript application/xml+rss application/json;
 
     # 上游服务器定义
-    upstream gridbnb_backend {
+    upstream sky_bot_backend {
         # 在docker-compose网络中，使用服务名作为主机名
-        server gridbnb-bot:58181;
+        server sky-bot:58181;
         keepalive 32;
     }
 
@@ -322,7 +322,7 @@ http {
 
         # 主要代理配置
         location / {
-            proxy_pass http://gridbnb_backend;
+            proxy_pass http://sky_bot_backend;
             proxy_http_version 1.1;
 
             # 代理头设置
@@ -344,7 +344,7 @@ http {
 
         # 静态文件缓存 (如果有)
         location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
-            proxy_pass http://gridbnb_backend;
+            proxy_pass http://sky_bot_backend;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -356,7 +356,7 @@ http {
 
         # API 路径优化
         location /api/ {
-            proxy_pass http://gridbnb_backend;
+            proxy_pass http://sky_bot_backend;
             proxy_http_version 1.1;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;

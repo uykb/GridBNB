@@ -58,7 +58,7 @@ def send_pushplus_message(content, title="交易信号通知", timeout=settings.
     data = {
         "title": title,
         "content": content,
-        "description": "GridBNB交易系统通知"
+        "description": "Sky-Bot交易系统通知"
     }
     
     headers = {

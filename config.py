@@ -118,7 +118,7 @@ settings = Settings()
 SYMBOLS_LIST = [s.strip() for s in settings.SYMBOLS.split(',') if s.strip()]
 
 # 保留必要的向后兼容性常量，但建议逐步迁移到 settings.XXX 的形式
-FLIP_THRESHOLD = lambda grid_size: (grid_size / 5) / 100  # 网格大小的1/5的1%
+FLIP_THRESHOLD = lambda grid_size: (grid_size / 6) / 100  # 网格大小的1/6的1%
 
 class TradingConfig:
     """

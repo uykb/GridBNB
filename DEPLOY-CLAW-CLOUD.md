@@ -1,8 +1,8 @@
-# GridBNB-USDT 在 claw.cloud 容器服务上的部署指南
+# Sky-Bot 在 claw.cloud 容器服务上的部署指南
 
 ## 概述
 
-本指南将帮助您在 claw.cloud 容器服务平台上部署 GridBNB-USDT 交易机器人。通过环境变量配置，您可以轻松地在云端运行这个自动化交易系统。
+本指南将帮助您在 claw.cloud 容器服务平台上部署 Sky-Bot 交易机器人。通过环境变量配置，您可以轻松地在云端运行这个自动化交易系统。
 
 ## 前置准备
 
@@ -128,10 +128,10 @@ GRID_PARAMS_JSON={"min": 1.0, "max": 4.0, "volatility_threshold": {"ranges": [{"
 在 claw.cloud 控制台查看容器日志：
 ```bash
 # 查看实时日志
-docker logs -f gridbnb-trading-bot
+docker logs -f sky-bot
 
 # 查看最近日志
-docker logs --tail 100 gridbnb-trading-bot
+docker logs --tail 100 sky-bot
 ```
 
 ### 2. Web UI 监控

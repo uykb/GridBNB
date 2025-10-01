@@ -5,8 +5,8 @@
 FROM python:3.10-slim
 
 # 设置维护者信息
-LABEL maintainer="GridBNB Trading Bot"
-LABEL description="GridBNB USDT Trading Bot for claw.cloud container service"
+LABEL maintainer="Sky-Bot"
+LABEL description="Sky-Bot USDT Trading Bot for claw.cloud container service"
 
 # 设置工作目录
 WORKDIR /app
@@ -56,8 +56,8 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 CMD ["python", "main.py"]
 
 # ========== 构建说明 ==========
-# 1. 在项目根目录执行: docker build -t gridbnb-bot .
-# 2. 运行容器: docker run -d --name gridbnb-bot -p 58181:58181 --env-file .env gridbnb-bot
+# 1. 在项目根目录执行: docker build -t sky-bot .
+# 2. 运行容器: docker run -d --name sky-bot -p 58181:58181 --env-file .env sky-bot
 # 3. 或者直接在 claw.cloud 控制台中使用此 Dockerfile 进行部署
 
 # ========== 优化特性 ==========

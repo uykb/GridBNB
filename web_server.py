@@ -23,7 +23,7 @@ def auth_required(func):
         if auth_header is None:
             return web.Response(
                 status=401,
-                headers={'WWW-Authenticate': 'Basic realm="GridBNB Trading Bot"'},
+                headers={'WWW-Authenticate': 'Basic realm="Sky-Bot"'},
                 text="需要认证"
             )
 
@@ -42,7 +42,7 @@ def auth_required(func):
 
         return web.Response(
             status=401,
-            headers={'WWW-Authenticate': 'Basic realm="GridBNB Trading Bot"'},
+            headers={'WWW-Authenticate': 'Basic realm="Sky-Bot"'},
             text="认证失败"
         )
 
@@ -695,4 +695,4 @@ async def handle_log_content(request):
             
         return web.Response(text=content)
     except Exception as e:
-        return web.Response(text="", status=500) 
+        return web.Response(text="", status=500)

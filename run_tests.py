@@ -9,7 +9,7 @@ import os
 
 def run_tests():
     """运行所有测试"""
-    print("🧪 开始运行GridBNB交易机器人测试套件...")
+    print("🧪 开始运行Sky-Bot交易机器人测试套件...")
     print("=" * 60)
     
     # 确保在项目根目录

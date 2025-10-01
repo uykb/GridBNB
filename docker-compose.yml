@@ -4,14 +4,14 @@
 version: '3.8'
 
 services:
-  gridbnb-bot:
+  sky-bot:
     # 使用优化的 Dockerfile
     build:
       context: .
       dockerfile: Dockerfile
     
     # 容器名称
-    container_name: gridbnb-trading-bot
+    container_name: sky-bot
     
     # 重启策略
     restart: unless-stopped
@@ -26,8 +26,8 @@ services:
     
     # 数据持久化 (如果 claw.cloud 支持卷挂载)
     volumes:
-      - gridbnb-data:/app/data
-      - gridbnb-logs:/app/logs
+      - sky-bot-data:/app/data
+      - sky-bot-logs:/app/logs
     
     # 健康检查
     healthcheck:
@@ -49,7 +49,7 @@ services:
     
     # 网络配置
     networks:
-      - gridbnb-network
+      - sky-bot-network
     
     # 环境变量 (主要配置应通过 .env.cloud 或控制台设置)
     environment:
@@ -58,14 +58,14 @@ services:
 
 # 数据卷定义
 volumes:
-  gridbnb-data:
+  sky-bot-data:
     driver: local
-  gridbnb-logs:
+  sky-bot-logs:
     driver: local
 
 # 网络定义
 networks:
-  gridbnb-network:
+  sky-bot-network:
     driver: bridge
 
 # ========== 使用说明 ==========
